@@ -8,7 +8,7 @@ This package has no dependencies or other install requirements beyond ROS 1.0: N
 
 ## Usage
 Add to the common xarco for general use xarco types, push a general use mesh, or xarco for a given compoenent and update the README.
-**DO NOT** add source code to this package as it is reserved for ROS message types only!!
+**DO NOT** add source code to this package as it is reserved for ROS description types only!!
 
 ## Features
 
