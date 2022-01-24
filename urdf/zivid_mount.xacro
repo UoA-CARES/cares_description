@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<robot name="zivid_mount"
+    xmlns:xacro="http://wiki.ros.org/xacro">
+    <!-- Zivid Properties -->
+    <xacro:macro name="zivid_mount" params="parent *origin name:=zivid_mount">
+
+        <xacro:property name="M_PI" value="3.1415926535897931" />
+        <xacro:property name="zivid_calibration_file" value="$(find mini_rig_description)/config/zivid_handeye_old.yaml" />
+        <xacro:property name="zivid_calibration" value="${load_yaml(zivid_calibration_file)}"/>
+        <joint name="ee_coupler" type="fixed">
+            <parent link="${parent}" />
+            <child link="zivid_bracket_link"/>
+            <xacro:insert_block name="origin" />
+        </joint>
+        <xacro:include filename="$(find zivid_description)/urdf/zivid_camera.xacro" />
+        <joint name="bracket_to_zivid" type="fixed">
+            <parent link="zivid_bracket_link" />
+            <child link="zivid_base_link"/>
+            <origin rpy="${pi} 0 0" xyz="-0.0 0 -0.05"/>
+        </joint>
+
+        <joint name="ee_link_to_zivid_optical_frame" type="fixed">
+            <parent link="${parent}"/>
+            <child link="zivid_optical_frame"/>
+            <origin xyz="${zivid_calibration['transformation']['x']} ${zivid_calibration['transformation']['y']} ${zivid_calibration['transformation']['z']}" rpy="${zivid_calibration['transformation']['roll']} ${zivid_calibration['transformation']['pitch']} ${zivid_calibration['transformation']['yaw']}"/>
+        </joint>
+        <!-- Zivid Bracket Base Link -->
+        <link name="zivid_base_link">
+            <!-- Visuals -->
+            <visual>
+                <origin rpy="0 0 ${-M_PI/2}" xyz="-0.023 0.037 -0.050"/>
+                <material name="blue">
+                    <color rgba="0.25 0.0 0.25 1"/>
+                </material>
+                <geometry>
+                    <mesh filename="package://mini_rig_description/meshes/ZividMount.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </visual>
+
+            <!-- Collisions -->
+            <collision>
+                <origin rpy="0 0 ${-M_PI/2}" xyz="-0.023 0.037 -0.050"/>
+                <material name="blue">
+                    <color rgba="0.25 0.0 0.25 1"/>
+                </material>
+                <geometry>
+                    <mesh filename="package://mini_rig_description/meshes/ZividMount.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+        </link>
+    </xacro:macro>
+</robot>

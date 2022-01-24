@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<robot name="zivid_stereo" xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="zivid_stereo" params="parent xyz rpy prefix stereo_calibration_file zivid_calibration_file stereo_name:=stereo_pair zivid_name:=zivid">
+    <xacro:property name="M_PI"     value="3.1415926535897931" />
+      
+    <!-- Base Link Setup -->
+    <xacro:joint_xacro name="${prefix}ee_coupler" parent="${parent}" child="${prefix}zivid_stereo_base_link" type="fixed" xyz="${xyz}" rpy="${rpy}"/>
+
+    <link name="${prefix}zivid_stereo_control_link" />
+    <xacro:joint_xacro name="${prefix}control_coupler" parent="${prefix}zivid_stereo_base_link" child="${prefix}zivid_stereo_control_link" type="fixed" xyz="${xyz}" rpy="${pi/4} 0.0 0.0"/>
+
+    <!-- Add the stereo stl --> 
+    <xacro:link_xacro name="${prefix}zivid_stereo_base_link" filename="package://cares_description/meshes/collision/zivid_stereo_mount_collision.stl" rpy="${3*pi/4} 0 0" scale="0.001 0.001 0.001"/> 
+
+    <!-- Box to protect the cables - maybe move to the stl -->
+    <!-- <xacro:joint_xacro name="${prefix}cables_coupler" parent="${prefix}zivid_stereo_base_link" child="${prefix}cables" type="fixed"/>      
+    <link name="${prefix}cables">
+      <xacro:cube xyz="-0.018 0.0 -0.06" size="0.035 0.14 0.03"/>
+    </link> -->
+
+    <!-- Stereo Pair -->
+    <!-- Load calibration files for the specific stereo pair to set left frame -->
+    <xacro:property name="stereo_handeye_calibration_file" value="${stereo_calibration_file}" />
+    <xacro:property name="stereo_handeye_calibration"      value="${load_yaml(stereo_handeye_calibration_file)}"/>
+
+    <!-- Body Frame for the stereo pair calibrated centre -->
+    <link name="${prefix}${stereo_name}/left_frame" />
+
+    <joint name="${prefix}zivid_stereo_${stereo_name}_left_joint" type="fixed">
+      <origin xyz="${stereo_handeye_calibration['transformation']['x']} ${stereo_handeye_calibration['transformation']['y']} ${stereo_handeye_calibration['transformation']['z']}" rpy="${stereo_handeye_calibration['transformation']['roll']} ${stereo_handeye_calibration['transformation']['pitch']} ${stereo_handeye_calibration['transformation']['yaw']}"/>
+      <parent link="${prefix}zivid_stereo_base_link" />
+      <child link="${prefix}${stereo_name}/left_frame" />
+    </joint>    
+
+    <!-- Optical Frame for the stereo pair calibrate centre -->
+    <link name="${prefix}${stereo_name}/left_optical_frame" />
+    <xacro:joint_xacro name="${prefix}${stereo_name}_left_optical_joint" parent="${prefix}${stereo_name}/left_frame" child="${prefix}${stereo_name}/left_optical_frame" rpy="${-M_PI/2} 0 ${-M_PI/2}" type="fixed"/>
+
+    <!-- Zivid -->
+    <!-- Load calibration files for the specific zivid -->
+    <xacro:property name="zivid_handeye_calibration_file" value="${zivid_calibration_file}" />
+    <xacro:property name="zivid_handeye_calibration"      value="${load_yaml(zivid_handeye_calibration_file)}"/>
+
+    <!-- Body frame for the zivid calibration centre -->
+    <link name="${prefix}${zivid_name}/frame" />
+
+    <joint name="${prefix}zivid_stereo_${zivid_name}_left_joint" type="fixed">
+      <origin xyz="${zivid_handeye_calibration['transformation']['x']} ${zivid_handeye_calibration['transformation']['y']} ${zivid_handeye_calibration['transformation']['z']}" rpy="${zivid_handeye_calibration['transformation']['roll']} ${zivid_handeye_calibration['transformation']['pitch']} ${zivid_handeye_calibration['transformation']['yaw']}"/>
+      <parent link="${prefix}zivid_stereo_base_link" />
+      <child link="${prefix}${zivid_name}/frame" />
+    </joint>    
+
+    <!-- Optical Frame for the zivid calibrate centre -->
+    <link name="${prefix}${zivid_name}/optical_frame" />
+    <xacro:joint_xacro name="${prefix}${zivid_name}_optical_frame" parent="${prefix}${zivid_name}/frame" child="${prefix}${zivid_name}/optical_frame" rpy="${-M_PI/2} 0 ${-M_PI/2}" type="fixed"/>
+
+  </xacro:macro>
+</robot>
+

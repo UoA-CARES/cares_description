@@ -20,17 +20,17 @@
     <xacro:property name="handeye_calibration"      value="${load_yaml(handeye_calibration_file)}"/>
 
     <!-- Body Frame for the stereo pair calibrated centre -->
-    <link name="${prefix}${name}_left_frame" />
+    <link name="${prefix}${name}/left_frame" />
 
     <joint name="${prefix}${name}_left_joint" type="fixed">
       <origin xyz="${handeye_calibration['transformation']['x']} ${handeye_calibration['transformation']['y']} ${handeye_calibration['transformation']['z']}" rpy="${handeye_calibration['transformation']['roll']} ${handeye_calibration['transformation']['pitch']} ${handeye_calibration['transformation']['yaw']}"/>
       <parent link="${prefix}${name}_base_link" />
-      <child link="${prefix}${name}_left_frame" />
+      <child link="${prefix}${name}/left_frame" />
     </joint>    
 
     <!-- Optical Frame for the stereo pair calibrate centre -->    
-    <link name="${prefix}${name}_left_optical_frame" />
-    <xacro:joint_xacro name="${prefix}${name}_left_optical_joint" parent="${prefix}${name}_left_frame" child="${prefix}${name}_left_optical_frame" rpy="${-M_PI/2} 0 ${-M_PI/2}" type="fixed"/>
+    <link name="${prefix}${name}/left_optical_frame" />
+    <xacro:joint_xacro name="${prefix}${name}_left_optical_joint" parent="${prefix}${name}/left_frame" child="${prefix}${name}/left_optical_frame" rpy="${-M_PI/2} 0 ${-M_PI/2}" type="fixed"/>
 
   </xacro:macro>
 </robot>
