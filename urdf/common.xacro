@@ -67,12 +67,12 @@
       
       <dynamics damping="1.0" friction="0.0"/>
 
-      <xacro:if value="${type != 'fixed'}">
+      <!-- <xacro:if value="${type != 'fixed'}">
         <limit effort="${limit['effort']}" lower="${limit['lower']}" upper="${limit['upper']}" velocity="${limit['velocity']}"/>
         <xacro:if value="${mimic != 'False'}">
           <mimic joint="${mimic}" multiplier="${mimic_feature['mult']}" offset="${mimic_feature['offset']}"/>
         </xacro:if>
-      </xacro:if>
+      </xacro:if> -->
     </joint>
 
   </xacro:macro>
