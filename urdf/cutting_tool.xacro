@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot name="cutting_tool" xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="stereo_pair" params="parent *origin prefix calibration_file name:=stereo_pair">
+    <xacro:property name="M_PI"     value="3.1415926535897931" />
+      
+    <!-- Base Link Setup -->
+    <xacro:joint_xacro name="${prefix}ee_coupler" parent="${parent}" child="${prefix}${name}_base_link" type="fixed"/>
+
+    <!-- Add the stereo stl -->
+    <xacro:link_xacro name="${prefix}${name}_base_link" filename="package://cares_description/meshes/visual/cutting_tool.stl" rpy="${pi/2} ${pi} ${pi/2}" scale="0.001 0.001 0.001"/> 
+
+
+    <!-- Load calibration files for the specific stereo pair to set left frame -->
+    <xacro:property name="handeye_calibration_file" value="${calibration_file}" />
+    <xacro:property name="handeye_calibration"      value="${load_yaml(handeye_calibration_file)}"/>
+
+    <!-- Body Frame for the stereo pair calibrated centre -->
+    <link name="${prefix}${name}/left_frame" />
+    <link name="${prefix}${name}/cutting_tool" />
+
+        <!-- Box to protect the cables - maybe move to the stl -->
+    <xacro:joint_xacro name="${prefix}cables_coupler" parent="${prefix}${name}_base_link" child="${prefix}cables" type="fixed"/>      
+    <link name="${prefix}cables">
+      <xacro:cube xyz="-0.0475 0.0 0.05" size="0.035 0.14 0.03"/>
+    </link>
+
+    <joint name="${prefix}${name}_left_joint" type="fixed">
+      <origin xyz="${handeye_calibration['transformation']['x']} ${handeye_calibration['transformation']['y']} ${handeye_calibration['transformation']['z']}" rpy="${handeye_calibration['transformation']['roll']} ${handeye_calibration['transformation']['pitch']} ${handeye_calibration['transformation']['yaw']}"/>
+      <parent link="${prefix}${name}_base_link" />
+      <child link="${prefix}${name}/left_frame" />
+    </joint>
+
+    <joint name="${prefix}${name}_cutting_joint" type="fixed">
+      <origin xyz="0.105 0.0 0.08" rpy="0.0 0.0 0.0"/>
+      <parent link="${prefix}${name}_base_link" />
+      <child link="${prefix}${name}/cutting_tool" />
+    </joint>    
+
+    <!-- Optical Frame for the stereo pair calibrate centre -->    
+    <link name="${prefix}${name}/left_optical_frame" />
+    <xacro:joint_xacro name="${prefix}${name}_left_optical_joint" parent="${prefix}${name}/left_frame" child="${prefix}${name}/left_optical_frame" rpy="${-M_PI/2} 0 ${-M_PI/2}" type="fixed"/>
+
+  </xacro:macro>
+</robot>
