@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="cutting_tool" xmlns:xacro="http://wiki.ros.org/xacro">
+<robot name="thinning_tool" xmlns:xacro="http://wiki.ros.org/xacro">
   <xacro:macro name="stereo_pair" params="parent *origin prefix calibration_file name:=stereo_pair">
     <xacro:property name="M_PI"     value="3.1415926535897931" />
       
@@ -7,7 +7,7 @@
     <xacro:joint_xacro name="${prefix}ee_coupler" parent="${parent}" child="${prefix}${name}_base_link" type="fixed"/>
 
     <!-- Add the stereo stl -->
-    <xacro:link_xacro name="${prefix}${name}_base_link" filename="package://cares_description/meshes/visual/cutting_tool.stl" rpy="${pi/2} ${pi} ${pi/2}" scale="0.001 0.001 0.001"/> 
+    <xacro:link_xacro name="${prefix}${name}_base_link" filename="package://cares_description/meshes/visual/thinning_tool_with_cone.stl" rpy="${pi/2} ${pi} ${pi/2}" scale="0.001 0.001 0.001"/> 
 
 
     <!-- Load calibration files for the specific stereo pair to set left frame -->
@@ -16,7 +16,7 @@
 
     <!-- Body Frame for the stereo pair calibrated centre -->
     <link name="${prefix}${name}/left_frame" />
-    <link name="${prefix}${name}/cutting_tool" />
+    <link name="${prefix}${name}/thinning_tool" />
 
         <!-- Box to protect the cables - maybe move to the stl -->
     <!-- <xacro:joint_xacro name="${prefix}cables_coupler" parent="${prefix}${name}_base_link" child="${prefix}cables" type="fixed"/>      
@@ -30,10 +30,10 @@
       <child link="${prefix}${name}/left_frame" />
     </joint>
 
-    <joint name="${prefix}${name}_cutting_joint" type="fixed">
-      <origin xyz="0.105 0.0 0.08" rpy="0.0 0.0 0.0"/>
+    <joint name="${prefix}${name}_thinning_joint" type="fixed">
+      <origin xyz="0.1375 0.0 0.0" rpy="0.0 0.0 0.0"/>
       <parent link="${prefix}${name}_base_link" />
-      <child link="${prefix}${name}/cutting_tool" />
+      <child link="${prefix}${name}/thinning_tool" />
     </joint>    
 
     <!-- Optical Frame for the stereo pair calibrate centre -->    
